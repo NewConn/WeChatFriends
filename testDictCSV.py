@@ -1,6 +1,8 @@
 import itchat
 import csv
 import codecs
+import re
+
 itchat.login()
 
 friends = itchat.get_friends(update=True)[0:]
@@ -21,7 +23,9 @@ class friend():
 
         self.csvFrame['Province'] = fri['Province']
         self.csvFrame['City'] = fri['City']
-        self.csvFrame['Signature'] = fri['Signature']
+        self.csvFrame['Signature'] = fri['Signature'].strip().replace("span", "").replace("class", "").replace("emoji", "")
+        rep = re.compile("1f\d+\w|[<>/=]")
+        self.csvFrame['Signature'] = rep.sub("", self.csvFrame['Signature'])
 
 file = codecs.open('names.csv', 'w', 'gbk', 'ignore')
 fieldnames = ['NickName', 'Sex', 'Province', 'City', 'Signature']
@@ -31,3 +35,4 @@ for fri in friends:
     member = friend(fri)
     writer.writerow(member.csvFrame)
 file.close()
+
